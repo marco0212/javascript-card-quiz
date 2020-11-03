@@ -130,6 +130,23 @@ const questions = [
 function Renderer({ quiz }) {
   this.quiz = quiz;
   
+  this.setup = () => {
+    const $app = this.select('#app');
+    const $button = this.createElement('button');
+    const handleStartButtonClick = () => {
+      this.clear();
+      this.render
+    }
+
+    this.setInnerText($button, 'Start Quiz');
+
+  }
+
+  this.renderProblem = (index) => {
+    const { question, code, choices } = this.quiz.questions[index];
+    
+  }
+
   this.select = (selector) => {
     return document.querySelector(selector);
   }
@@ -163,24 +180,7 @@ function Renderer({ quiz }) {
     this.select('#app').innerHTML = '';
   }
 
-  this.init = ({ question, code, choices }) => {
-    const $app = this.select('#app');
-    const $startButton = document.createElement('button');
-    const handleStartButtonClick = () => {
-      this.clear();
-      this.renderProblem({ question, code, choices });
-    }
-
-    $startButton.id = 'start-button';
-    this.setInnerText($startButton, 'Start Quiz');
-    this.addEventListener($startButton, {
-      eventName: 'click',
-      handler: handleStartButtonClick
-    });
-    this.appendElement($app, $startButton);
-  }
-
-  this.createQuestion = (question) => {
+  this.createQuestionEl = (question) => {
     const $paragraph = this.createElement('p');
 
     this.addClassName($paragraph, 'question');
@@ -188,14 +188,14 @@ function Renderer({ quiz }) {
     return $paragraph;
   }
 
-  this.createCode = (code) => {
+  this.createCodeEl = (code) => {
     const $code = this.createElement('code');
 
     this.setInnerText($code, code);
     return $code;
   }
 
-  this.createChoice = (choice, index) => {
+  this.createChoiceEl = (choice, index) => {
     const $fieldset = this.createElement('fieldset');
     const $input = this.createElement('input');
     const $label = this.createElement('label');
@@ -210,64 +210,16 @@ function Renderer({ quiz }) {
     this.appendElement($fieldset, $input, $label);
     return $fieldset;
   }
-
-  this.renderProblem = ({ question, code, choices }) => {
-    this.clear();
-
-    const $question = this.createQuestion(question);
-    this.appendToApp($question);
-
-    if (code) {
-      const $code = this.createCode(code);
-      this.appendToApp($code);
-    }
-
-    const $choices = choices.map((choice, index) => this.createChoice(choice, index));
-    this.appendToApp(...$choices);
-  }
 }
 
-function Quiz({ questions, renderer }) {
+function Quiz({ questions }) {
   this.questions = questions;
-  this.renderer = renderer;
   this.turnIndex = 0;
   this.score = 0;
   this.selectedAnswer = null;
-
-  this.setup = () => {
-    const { question, code, choices } = this.questions[this.turnIndex];
-    this.renderer.init({ question, code, choices });
-    this.turnIndex++;
-  }
-
-  this.selectAnswer = (index) => {
-    this.selectedAnswer = index;
-  }
-
-  this.proceed = (turn, answer) => {
-    try {
-      this.tryProceed(turn, answer);
-    } catch (error) {
-      alert(error.message);
-    }
-  }
-
-  this.tryProceed = (turn, answer) => {
-    const { question, choices, code, correctAnswer } = this.questions[index];
-
-    if (turn < 0 || turn >= this.questions.length) {
-      throw new Error('Invalid turn index');
-    }
-
-    if (answer < 0 || answer >= choices.length) {
-      throw new Error('Invalid answer index');
-    }
-
-    this.renderer.renderProblem({ question, choices, code });
-  }
 }
 
-const renderer = new Renderer();
-const quiz = new Quiz({ questions, renderer });
+const quiz = new Quiz({ questions });
+const renderer = new Renderer({ quiz });
 
-quiz.setup();
+renderer.setup();
