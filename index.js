@@ -212,6 +212,19 @@ function Renderer({ quiz }) {
     return $button;
   }
 
+  this.clear = () => {
+    this.selectElement('#app').innerHTML = '';
+  }
+  
+  this.appendToApp = (...element) => {
+    const $app = this.selectElement('#app');
+    this.appendElement($app, ...element);
+  }
+
+  this.appendElement = (target, ...element) => {
+    target.append(...element);
+  }
+  
   this.selectElement = (selector) => {
     return document.querySelector(selector);
   }
@@ -228,21 +241,8 @@ function Renderer({ quiz }) {
     target.innerText = text;
   }
 
-  this.appendElement = (target, ...element) => {
-    target.append(...element);
-  }
-
-  this.appendToApp = (...element) => {
-    const $app = this.selectElement('#app');
-    this.appendElement($app, ...element);
-  }
-
   this.addEventListener = (target, { eventName, handler }) => {
     target.addEventListener(eventName, handler);
-  }
-
-  this.clear = () => {
-    this.selectElement('#app').innerHTML = '';
   }
 }
 
